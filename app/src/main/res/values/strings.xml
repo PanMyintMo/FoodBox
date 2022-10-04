@@ -1,0 +1,88 @@
+<resources>
+    <string name="app_name">Food Sample</string>
+
+    <string name="label_restaurant_list">Restaurant List</string>
+    <string name="label_shopping_cart">Shopping Cart</string>
+    <string name="label_order">Order</string>
+    <string name="label_order_success">Order Success</string>
+
+    <string name="btn_checkout">Checkout</string>
+    <string name="btn_checkout_items">Checkout (%d) items</string>
+    <string name="btn_order">Order</string>
+    <string name="btn_order_now">Order now</string>
+    <string name="btn_order_with_unit">Order now (%.2f $)</string>
+    <string name="btn_ok">OK</string>
+
+    <string name="title_price_unit">%.2f $</string>
+    <string name="title_shopping_cart">Shopping cart</string>
+    <string name="title_customer_details">Customer details</string>
+    <string name="title_pickup_delivery">Pickup delivery</string>
+    <string name="title_card_details">Card details</string>
+    <string name="title_total_items_in_cart">Total items in cart</string>
+    <string name="title_subtotal">Subtotal</string>
+    <string name="title_delivery_charge">Delivery charge</string>
+    <string name="title_total">Total</string>
+
+    <string name="hint_name">Name</string>
+    <string name="hint_address">Address</string>
+    <string name="hint_city">City</string>
+    <string name="hint_state">State</string>
+    <string name="hint_zip_code">Zip code</string>
+    <string name="hint_mm_yy">mm/yy</string>
+    <string name="hint_card_expiry">Expiry</string>
+    <string name="hint_card_number">Card number</string>
+    <string name="hint_card_pin">PIN</string>
+
+    <string name="err_empty">%s should not be empty.</string>
+
+    <string name="msg_order_success">Order placed successfully.</string>
+    <string name="check_out">Check Out</string>
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="search_here">Search Here!</string>
+    <string name="search_restaurant">Search Restaurant</string>
+    <string name="login">Login</string>
+    <string name="profile">Profile</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="rate_up">Rate Up</string>
+    //drawer
+    <string name="open">Drawer Open</string>
+    <string name="close">Drawer Close</string>
+    <string name="setting">Setting</string>
+    <string name="log_out">Log Out</string>
+    <string name="btn_reorder">Reorder</string>
+    <string name="title_pending">Pending</string>
+    <string name="please_enter_your_credential_login">Please Enter Your Credential Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="confirm_password">Confirm Password</string>
+
+    <string name="please_enter_your_register_app">Please Enter Your Register App!</string>
+    <string name="mgmg_gmail_com">mgmg@gmail.com</string>
+    <string name="name">Name</string>
+    <string name="register">Register</string>
+    <string name="register_here">Register Here?</string>
+    <string name="submit">Submit</string>
+    <string name="rating_result_is">Rating Result is :</string>
+    <string name="call">Call</string>
+    <string name="reorder">Reorder</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="edit">Edit</string>
+    <string name="order_history">Order History</string>
+    <string name="myanmar">Myanmar</string>
+    <string name="enter_your_mobile_number">Enter your mobile number</string>
+    <string name="tap_next_to_verify_your_account_with_your_phone_number_you_don_t_need_to_manualy_enter_verification_code_if_the_number_install_in_this_phone">Tap next to verify your account with your phone number you dont need to manualy enter verification code if the number install in this phone</string>
+    <string name="next">Next</string>
+    <string name="enter_the_code_that_was_send_to">Enter the code that was send to</string>
+    <string name="i_didn_t_get_a_code">I didnt get a code</string>
+    <string name="tap_continue_to_accept_our_terms_data_policy_cookie_use_and_the_privacy_policy_and_terms_of_service">Tap continue to accept_our terms data policy cookie use and the privacy policy and terms of service</string>
+    <string name="congratulation_your_number_is_verified_click_continue_to_proceed_your_process">Congratulation your number is verified click continue to proceed your process</string>
+    <string name="do_you_want_to_proceed">Do you want to proceed</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="_959975835125">959975835125</string>
+    <string name="you_don_t_have_an_account">You don\'t have an account?</string>
+</resources>

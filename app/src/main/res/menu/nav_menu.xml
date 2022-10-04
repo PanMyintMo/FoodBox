@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <item
+        android:id="@+id/nav_call"
+        android:icon="@drawable/ic_phone"
+        android:iconTint="@color/white"
+        android:title="@string/call"
+        tools:targetApi="o" />
+    <item
+        android:id="@+id/reorder"
+        android:icon="@drawable/ic_record"
+        android:iconTint="@color/white"
+        android:title="@string/order_history"
+        tools:targetApi="o" />
+
+  <!--  <item android:title="@string/profile">
+        <menu>
+            <item
+                android:id="@+id/login"
+                android:icon="@drawable/ic_baseline_login"
+                android:iconTint="@color/white"
+                android:title="@string/login"
+                tools:targetApi="o" />
+        </menu>
+    </item>-->
+    <item android:title="@string/communicate">
+        <menu>
+            <item
+                android:id="@+id/share"
+                android:icon="@drawable/ic_share"
+                android:iconTint="@color/white"
+                android:title="@string/share"
+                tools:targetApi="o" />
+            <item
+                android:id="@+id/rate"
+                android:icon="@drawable/ic_rate_review"
+                android:iconTint="@color/white"
+                android:title="@string/rate_up"
+                tools:targetApi="o" />
+        </menu>
+    </item>
+
+    <item android:title="Setting"
+        tools:ignore="HardcodedText">
+
+        <menu>
+            <item android:id="@+id/setting"
+                android:title="@string/setting"
+                android:icon="@drawable/ic_baseline_settings_24"
+                android:iconTint="@color/white"
+                tools:targetApi="o">
+            </item>
+            <item android:id="@+id/logout"
+                android:title="@string/log_out"
+                android:iconTint="@color/white"
+                android:icon="@drawable/ic_baseline_login"
+                tools:targetApi="o">
+            </item>
+        </menu>
+
+    </item>
+</menu>

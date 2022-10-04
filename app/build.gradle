@@ -1,0 +1,116 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
+}
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.pan.foodbox"
+        minSdk 21
+        targetSdk 33
+        versionCode 4
+        versionName "1.4.0"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildFeatures {
+        dataBinding true
+        viewBinding true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            debuggable = false
+       
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.activity:activity-ktx:1.6.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'com.google.code.gson:gson:2.9.1'
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation('org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4')
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    kapt 'com.github.bumptech.glide:compiler:4.13.2'
+
+    //notification
+    implementation 'com.nex3z:notification-badge:1.0.5'
+    //swipeRefresh
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
+
+    //room com.example.foodsample.database
+    implementation("androidx.room:room-runtime:2.4.3")
+    kapt("androidx.room:room-compiler:2.4.3")
+    implementation("androidx.room:room-ktx:2.4.3")
+    androidTestImplementation "androidx.room:room-testing:2.4.3"
+
+    //lifecycle
+    //viewModel
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha02")
+    implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
+    //jsoup for html parser
+    implementation 'org.jsoup:jsoup:1.15.2'
+
+
+    //firebase
+    implementation platform('com.google.firebase:firebase-bom:30.3.2')
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
+    implementation 'com.google.firebase:firebase-storage-ktx:20.0.2'
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.firebaseui:firebase-ui-storage:8.0.0'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    //implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
+
+    //pinview
+    implementation 'io.github.chaosleung:pinview:1.4.4'
+
+    //stepview
+    implementation 'com.github.shuhart:stepview:1.5.1'
+
+
+    //Mailer
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
+    implementation "io.reactivex.rxjava2:rxjava:2.2.8"
+
+    implementation 'androidx.browser:browser:1.4.0'
+}

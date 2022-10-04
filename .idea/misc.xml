@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/backgroung_btn.xml" value="0.115" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/bg_open_hours.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/clickbtn.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/cust_search_bg.xml" value="0.1015" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/custom_shape.xml" value="0.1" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_add.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_add_shopping_cart.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_baseline_more_vert_24.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_restaurant_placeholder.xml" value="0.1" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_shopping_cart.xml" value="0.123" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/ic_splash.xml" value="0.122" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/main_menu_shopping_cart.xml" value="0.122" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/drawable/nb_badge_bg.xml" value="0.1215" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/action_bar_notification_icon.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_detail.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_login.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_main.xml" value="0.17083333333333334" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_order_now.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_order_success.xml" value="0.17083333333333334" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_place_your_order.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_rating_bar.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_register.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_reorder.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_restaurant_menu.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_setting.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_shopping_cart.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_splash.xml" value="0.18" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_success_order.xml" value="0.18" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/activity_verify.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/fragment_ingredient.xml" value="0.1361111111111111" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/fragment_instruction.xml" value="0.1361111111111111" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/fragment_overview.xml" value="0.1814814814814815" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/ingredient_row.xml" value="0.5" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/item_cart.xml" value="0.1" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/item_order_history.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/item_restaurant.xml" value="0.25" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/item_restaurant_menu.xml" value="0.2" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/menu_record_row.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/menu_row.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/menu_shopping_cart.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/nav_header.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/place_your_order_activity.xml" value="0.1398148148148148" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/place_your_order_row.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/processing_dialog.xml" value="0.22" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/profile_create_dialog.xml" value="0.14" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/reorder_row.xml" value="0.33" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/layout/restaurant_data_row.xml" value="0.37383177570093457" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/cust_search.xml" value="0.1361111111111111" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/custom_popup_menu.xml" value="0.17083333333333334" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/languages_menu.xml" value="0.1638888888888889" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/nav_menu.xml" value="0.67" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/restaurant_menu.xml" value="0.17083333333333334" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/restaurant_search.xml" value="0.2" />
+        <entry key="..\:/TestProjects/FoodSample/app/src/main/res/menu/shopping_cart_menu.xml" value="0.25" />
+      </map>
+    </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="1">
+      <item index="0" class="java.lang.String" itemvalue="androidx.room.TypeConverters" />
+    </list>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+  <component name="SuppressABINotification">
+    <option name="modulesWithSuppressedNotConfigured">
+      <set>
+        <option value="FoodSample.app" />
+      </set>
+    </option>
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.1" />
+      </ProjectState>
+    </option>
+  </component>
+</project>

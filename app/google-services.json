@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "769838836651",
+    "project_id": "food-box-b881c",
+    "storage_bucket": "food-box-b881c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:769838836651:android:48e39003dcee45fb0740ee",
+        "android_client_info": {
+          "package_name": "com.pan.foodbox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "769838836651-lt2671cvfviercvr39kf19gb41fglp0k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pan.foodbox",
+            "certificate_hash": "5a4397bac2a1e86f3f85db198ae292a406273ea0"
+          }
+        },
+        {
+          "client_id": "769838836651-lfo9vbkma8j4mt50mjaf9tfi6s61ul2i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1bxvwcVEpOsRxgSYUTMOGnnv6w781Ios"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "769838836651-lfo9vbkma8j4mt50mjaf9tfi6s61ul2i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
