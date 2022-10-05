@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -18,50 +22,69 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FoodSample"
         tools:targetApi="31">
+
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+
+        <meta-data android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version">
+
+        </meta-data>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBbuejJQRYhBD5gz681slKQxKMitp1VJiM" />
+
+        <activity
+            android:name=".ui.MapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_maps" />
         <activity
             android:name="com.pan.foodbox.SettingActivity"
             android:exported="false" />
-
         <activity
             android:name=".VerifyActivity"
-            android:exported="false">
-
-        </activity>
-
+            android:exported="false"/>
         <activity
-            android:name="com.pan.foodbox.ui.RatingBarActivity"
+            android:name=".ui.RatingBarActivity"
             android:exported="false" />
         <activity
-            android:name="com.pan.foodbox.ui.RegisterActivity"
+            android:name=".ui.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name="com.pan.foodbox.ui.LoginActivity"
-            android:exported="false"
-          />
-        <activity
-            android:name="com.pan.foodbox.ui.OrderHistoryActivity"
+            android:name=".ui.LoginActivity"
             android:exported="false" />
         <activity
-            android:name="com.pan.foodbox.ui.DetailActivity"
+            android:name=".ui.OrderHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.DetailActivity"
             android:exported="false"
             android:label="Detail"
             android:theme="@style/Theme.FoodSample.DetailActivity" />
         <activity
-            android:name="com.pan.foodbox.ui.OrderSuccessActivity"
+            android:name=".ui.OrderSuccessActivity"
             android:exported="false" />
         <activity
-            android:name="com.pan.foodbox.ui.ShoppingCartActivity"
+            android:name=".ui.ShoppingCartActivity"
             android:exported="false" />
         <activity
-            android:name="com.pan.foodbox.ui.OrderNowActivity"
+            android:name=".ui.OrderNowActivity"
             android:exported="false" />
-
         <activity
-            android:name="com.pan.foodbox.ui.RestaurantMenuActivity"
+            android:name=".ui.RestaurantMenuActivity"
             android:exported="false"
             android:theme="@style/Theme.FoodSample.NoActionBar" />
         <activity
-            android:name="com.pan.foodbox.ui.SplashActivity"
+            android:name=".ui.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,15 +93,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.pan.foodbox.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
 
-            <!-- <intent-filter> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-
-
-            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            <!-- </intent-filter> -->
         </activity>
     </application>
 

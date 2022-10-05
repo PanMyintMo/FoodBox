@@ -1,5 +1,6 @@
 package com.pan.foodbox.adapter
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.pan.foodbox.R
 import com.pan.foodbox.databinding.ItemRestaurantBinding
 import com.pan.foodbox.models.Hours
 import com.pan.foodbox.models.Restaurant
+import com.pan.foodbox.ui.MapsActivity
 import com.pan.foodbox.ui.RestaurantMenuActivity
 import java.util.*
 import kotlin.collections.ArrayList
@@ -21,17 +23,20 @@ class RestaurantAdapter(
     private val restaurants: ArrayList<Restaurant>,
     private val onItemClickedListener: OnItemClickedListener
 ) :
-    RecyclerView.Adapter<RestaurantAdapter.PlaceHolder>(),Filterable {
+    RecyclerView.Adapter<RestaurantAdapter.PlaceHolder>(), Filterable {
 
-    private var userFilter:ArrayList<Restaurant> = arrayListOf()
+    private var userFilter: ArrayList<Restaurant> = arrayListOf()
 
     init {
         userFilter = restaurants
     }
 
-    private val calendar = java.util.Calendar.getInstance()
+    private val calendar = Calendar.getInstance()
     private val todayName =
-        calendar.getDisplayName(java.util.Calendar.DAY_OF_WEEK, java.util.Calendar.LONG, Locale.ENGLISH) ?: "Sunday"
+        calendar.getDisplayName(
+           Calendar.DAY_OF_WEEK, Calendar.LONG,
+            Locale.ENGLISH
+        ) ?: "Sunday"
 
     inner class PlaceHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val binding = ItemRestaurantBinding.bind(itemView)
@@ -56,13 +61,18 @@ class RestaurantAdapter(
                 .placeholder(R.drawable.ic_restaurant_placeholder)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivThumbnail)
-            root.setOnClickListener {
+            holder.binding.map.setOnClickListener {
+                val intent = Intent(holder.itemView.context, MapsActivity::class.java)
+                holder.itemView.context.startActivity(intent)
 
+            }
+
+            root.setOnClickListener {
                 onItemClickedListener.onItemClick(restaurant)
                 val intent = Intent(holder.itemView.context, RestaurantMenuActivity::class.java)
-            intent.putExtra(RestaurantMenuActivity.EXTRA_RESTAURANT, restaurant)
-            holder.itemView.context.startActivity(intent)
-        }
+                intent.putExtra(RestaurantMenuActivity.EXTRA_RESTAURANT, restaurant)
+                holder.itemView.context.startActivity(intent)
+            }
         }
     }
 
@@ -88,33 +98,33 @@ class RestaurantAdapter(
     }
 
     override fun getFilter(): Filter {
-       return object :Filter(){
-           override fun performFiltering(p0: CharSequence?): FilterResults {
-               val charSequence=p0.toString()
-              userFilter= if (charSequence.isEmpty()){
-                  restaurants
-              }
-               else {
+        return object : Filter() {
+            override fun performFiltering(p0: CharSequence?): FilterResults {
+                val charSequence = p0.toString()
+                userFilter = if (charSequence.isEmpty()) {
+                    restaurants
+                } else {
 
-                   val resultList:ArrayList<Restaurant> = arrayListOf()
-                   for (row in restaurants){
-                       if (row.name.contains(charSequence)){
-                           resultList.add(row)
-                       }
-                   }
-                  resultList
-              }
+                    val resultList: ArrayList<Restaurant> = arrayListOf()
+                    for (row in restaurants) {
+                        if (row.name.contains(charSequence)) {
+                            resultList.add(row)
+                        }
+                    }
+                    resultList
+                }
 
-               val filterResults=FilterResults()
-               filterResults.values=userFilter
-               return filterResults
-           }
+                val filterResults = FilterResults()
+                filterResults.values = userFilter
+                return filterResults
+            }
 
-           override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
-              userFilter = p1?.values as ArrayList<Restaurant>
-               notifyDataSetChanged()
-           }
+            @SuppressLint("NotifyDataSetChanged")
+            override fun publishResults(p0: CharSequence?, p1: FilterResults?) {
+                userFilter = p1?.values as ArrayList<Restaurant>
+                notifyDataSetChanged()
+            }
 
-       }
+        }
     }
 }
