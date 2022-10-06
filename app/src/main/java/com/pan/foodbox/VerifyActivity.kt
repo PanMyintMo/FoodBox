@@ -60,6 +60,7 @@ class VerifyActivity : BaseActivity() {
                 //  startSmartUserConsent()
                 binding.layout1.visibility = View.GONE
                 binding.layout2.visibility = View.VISIBLE
+
                 sendVerificationCode(phoneNumber) // code ပို့
             }
         }
@@ -77,7 +78,7 @@ class VerifyActivity : BaseActivity() {
                 currentStep++
                 binding.stepView.go(currentStep, true)
             } else {
-                binding.stepView.done(true)
+                binding.stepView.done(true)   
             }
             processingDialog()
         }
@@ -215,13 +216,5 @@ class VerifyActivity : BaseActivity() {
             }
     }
 
-    /*override fun onStart() {
-        super.onStart()
-        registerBroadcastReceiver()
-    }
 
-    override fun onStop() {
-        super.onStop()
-        unregisterReceiver(smsBroadcastReceiver)
-    }*/
 }

@@ -94,7 +94,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.firebaseui:firebase-ui-storage:8.0.0'
     implementation 'com.google.firebase:firebase-auth-ktx'
-    //implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
+    implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
     //pinview
     implementation 'io.github.chaosleung:pinview:1.4.4'
     //stepview
