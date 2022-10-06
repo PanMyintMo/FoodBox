@@ -107,7 +107,7 @@ class RegisterActivity : BaseActivity() {
     }
 
     private fun startRegister(name: String, email: String, pass: String) {
-        if (checkNetwork()){
+
             updateUI(true)
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener {
@@ -116,17 +116,12 @@ class RegisterActivity : BaseActivity() {
                         it.result.user?.let { user ->
                             uploadProfileImage(user.uid, name, email)
                         }
-                    } else {
-                        updateUI(false)
                     }
                 }
         }
-        else{
-            binding.progressbar.visibility=View.VISIBLE
-            binding.progressbar.isIndeterminate = true
-        }
 
-    }
+
+
 
     private fun pickImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -205,7 +200,9 @@ class RegisterActivity : BaseActivity() {
                     startActivity(intent)
                     finish()
                 }
-
+            }
+            .addOnFailureListener {
+                Toast.makeText(this@RegisterActivity, "$it", Toast.LENGTH_SHORT).show()
             }
     }
 

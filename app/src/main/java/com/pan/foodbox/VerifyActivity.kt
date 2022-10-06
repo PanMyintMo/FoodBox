@@ -1,7 +1,10 @@
 package com.pan.foodbox
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -41,27 +44,35 @@ class VerifyActivity : BaseActivity() {
         binding.layout1.visibility = View.VISIBLE
 
         binding.submit1.setOnClickListener {
-            val phoneNumber = binding.phoneNumber.text.toString()
-            binding.phonenumberText.text = phoneNumber
 
-            if (phoneNumber.isBlank()) {
-                binding.phoneLayout.error = "Enter a Phone Number"
-                binding.phoneNumber.requestFocus()
-            } else if (phoneNumber.length < 10) {
-                binding.phoneNumber.error = "Please enter a valid Phone Number"
-                binding.phoneNumber.requestFocus()
-            } else {
-                if (currentStep < binding.stepView.stepCount - 1) {
-                    currentStep++
-                    binding.stepView.go(currentStep, true)
+            if (checkNetwork()) {
+                val phoneNumber = binding.phoneNumber.text.toString()
+                binding.phonenumberText.text = phoneNumber
+
+                if (phoneNumber.isBlank()) {
+                    binding.phoneLayout.error = "Enter a Phone Number"
+                    binding.phoneNumber.requestFocus()
+                } else if (phoneNumber.length < 10) {
+                    binding.phoneNumber.error = "Please enter a valid Phone Number"
+                    binding.phoneNumber.requestFocus()
                 } else {
-                    binding.stepView.done(true)
+                    if (currentStep < binding.stepView.stepCount - 1) {
+                        currentStep++
+                        binding.stepView.go(currentStep, true)
+                    } else {
+                        binding.stepView.done(true)
+                    }
+                    //  startSmartUserConsent()
+                    binding.layout1.visibility = View.GONE
+                    binding.layout2.visibility = View.VISIBLE
+                    sendVerificationCode(phoneNumber) // code ပို့
                 }
-                //  startSmartUserConsent()
-                binding.layout1.visibility = View.GONE
-                binding.layout2.visibility = View.VISIBLE
-
-                sendVerificationCode(phoneNumber) // code ပို့
+            } else {
+                Toast.makeText(
+                    this@VerifyActivity,
+                    "Please check your internet connection!",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         binding.submit2.setOnClickListener {
@@ -78,7 +89,7 @@ class VerifyActivity : BaseActivity() {
                 currentStep++
                 binding.stepView.go(currentStep, true)
             } else {
-                binding.stepView.done(true)   
+                binding.stepView.done(true)
             }
             processingDialog()
         }
@@ -99,7 +110,7 @@ class VerifyActivity : BaseActivity() {
         PhoneAuthProvider.verifyPhoneNumber(optionBuilder.build())
     }
 
-    private val  mCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+    private val mCallBack = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         override fun onVerificationCompleted(phoneAuthCreditial: PhoneAuthCredential) {
             val code: String = phoneAuthCreditial.smsCode.toString()
             Toast.makeText(this@VerifyActivity, code, Toast.LENGTH_SHORT).show()
@@ -216,5 +227,12 @@ class VerifyActivity : BaseActivity() {
             }
     }
 
+    private fun checkNetwork(): Boolean {
+        val connectivityManager =
+            getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(activeNetwork)
 
+        return networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
 }
