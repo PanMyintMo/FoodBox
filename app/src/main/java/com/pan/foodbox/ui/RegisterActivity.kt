@@ -119,10 +119,6 @@ class RegisterActivity : BaseActivity() {
                     }
                 }
         }
-
-
-
-
     private fun pickImage() {
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.type = "image/*"

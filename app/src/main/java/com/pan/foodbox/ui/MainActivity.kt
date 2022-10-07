@@ -57,10 +57,9 @@ class MainActivity : BaseActivity(),
         editor.putBoolean("isRegister",true)
         editor.apply()
 
-
         val currentUser: FirebaseUser? = firebaseAuth.currentUser
 
-        val navigationView = findViewById(R.id.nvView) as NavigationView
+        val navigationView = findViewById<NavigationView>(R.id.nvView)
         val navHeader = navigationView.getHeaderView(0)
         val nvEmail = navHeader.findViewById(R.id.user_mail) as TextView
         val nvName = navHeader.findViewById(R.id.user_name) as TextView

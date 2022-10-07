@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import com.google.firebase.auth.FirebaseAuth
 import com.pan.foodbox.R
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -21,12 +20,25 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(2500)
             val sharePreference = getSharedPreferences("success", MODE_PRIVATE)
-            if (sharePreference.contains("isRegister")) {
+      
+            
+           val resultData= sharePreference.getBoolean("isRegister",false)
+         //   Toast.makeText(this@SplashActivity, "$resultData", Toast.LENGTH_SHORT).show()
+            
+            if (resultData){
                 goToMain()
             }
             else{
                 startActivity(Intent(this@SplashActivity,LoginActivity::class.java))
+
             }
+      
+        /* if (sharePreference.contains("isRegister")) {
+                goToMain()
+            }
+            else{
+                startActivity(Intent(this@SplashActivity,LoginActivity::class.java))
+            }*/
         }
     }
 

@@ -1,8 +1,6 @@
 package com.pan.foodbox
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Bundle
@@ -13,20 +11,10 @@ import com.google.firebase.auth.*
 import com.pan.foodbox.databinding.ActivityVerifyBinding
 import com.pan.foodbox.databinding.ProcessingDialogBinding
 import com.pan.foodbox.ui.BaseActivity
-import com.pan.foodbox.ui.RegisterActivity
 import java.util.concurrent.TimeUnit
 
 
 class VerifyActivity : BaseActivity() {
-
-    /* private val REQ_USER_CONSENT = 200
-     var smsBroadcastReceiver: SmsBroadcastReceiver? = null*/
-
-    /* companion object {
-         const val VERI = "verification_Code"
-     }*/
-
-    // private lateinit var user: User
     private lateinit var dialogBinding: ProcessingDialogBinding
     private var currentStep = 0
     private lateinit var binding: ActivityVerifyBinding
@@ -91,7 +79,8 @@ class VerifyActivity : BaseActivity() {
             } else {
                 binding.stepView.done(true)
             }
-            processingDialog()
+          val dialog=ProcessingDialog()
+            dialog.show(supportFragmentManager,"customDialog")
         }
     }
 
@@ -117,7 +106,6 @@ class VerifyActivity : BaseActivity() {
             binding.pinView.append(code)
             verifyCode(code)
         }
-
         override fun onVerificationFailed(p0: FirebaseException) {
             Toast.makeText(
                 this@VerifyActivity,
@@ -188,7 +176,7 @@ class VerifyActivity : BaseActivity() {
         signInWithPhoneAuthCredential(credential)
     }
 
-    private fun processingDialog() {
+/*    private fun processingDialog() {
         val builder = AlertDialog.Builder(this).create()
         val view = layoutInflater.inflate(R.layout.processing_dialog, null)
         dialogBinding = ProcessingDialogBinding.bind(view)
@@ -204,11 +192,12 @@ class VerifyActivity : BaseActivity() {
             startActivity(intent)
         }
         builder.show()
-    }
+    }*/
 
     private fun signInWithPhoneAuthCredential(phoneAuthCredential: PhoneAuthCredential) {
         firebaseAuth.signInWithCredential(phoneAuthCredential)
             .addOnCompleteListener {
+
                 if (it.isSuccessful) {
                     if (currentStep < binding.stepView.stepCount - 1) {
                         currentStep++
