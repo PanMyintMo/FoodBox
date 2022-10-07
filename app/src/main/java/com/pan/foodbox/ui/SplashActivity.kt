@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.pan.foodbox.R
 import kotlinx.coroutines.delay
@@ -20,17 +19,13 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             delay(2500)
             val sharePreference = getSharedPreferences("success", MODE_PRIVATE)
-      
-            
-           val resultData= sharePreference.getBoolean("isRegister",false)
+            val resultData= sharePreference.getBoolean("isRegister",false)
          //   Toast.makeText(this@SplashActivity, "$resultData", Toast.LENGTH_SHORT).show()
-            
             if (resultData){
                 goToMain()
             }
             else{
                 startActivity(Intent(this@SplashActivity,LoginActivity::class.java))
-
             }
       
         /* if (sharePreference.contains("isRegister")) {
@@ -41,7 +36,6 @@ class SplashActivity : AppCompatActivity() {
             }*/
         }
     }
-
     private fun goToMain() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()

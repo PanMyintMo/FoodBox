@@ -27,9 +27,6 @@ class LoginActivity : BaseActivity() {
         supportActionBar?.hide()
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
         updateUI(false)
-
-
-
         binding.textLogin.setOnClickListener {
             checkLoginDetail()
         }
@@ -44,6 +41,7 @@ class LoginActivity : BaseActivity() {
     private fun updateUI(login: Boolean) {
         binding.textProgress.visibility = if (login) View.VISIBLE else View.GONE
         binding.textProgress.isIndeterminate = false
+        binding.textLogin.isEnabled=!login
 
     }
 
