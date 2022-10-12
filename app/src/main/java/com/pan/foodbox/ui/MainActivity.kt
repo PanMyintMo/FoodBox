@@ -31,7 +31,6 @@ import com.google.firebase.storage.ktx.storage
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-
 class MainActivity : BaseActivity(),
     RestaurantAdapter.OnItemClickedListener {
     private lateinit var toggle: ActionBarDrawerToggle
