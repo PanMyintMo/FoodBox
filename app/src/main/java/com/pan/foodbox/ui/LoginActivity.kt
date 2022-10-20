@@ -12,7 +12,6 @@ import android.widget.Toast
 import com.pan.foodbox.databinding.ActivityLoginBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.pan.foodbox.VerifyActivity
 
 class LoginActivity : BaseActivity() {
 

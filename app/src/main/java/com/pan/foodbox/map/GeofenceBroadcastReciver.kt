@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.map
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
-import com.google.type.LatLng
 import com.pan.foodbox.ui.MapsActivity
 
 class GeofenceBroadcastReciver : BroadcastReceiver() {
@@ -17,7 +16,7 @@ class GeofenceBroadcastReciver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Toast.makeText(context, "Geofence triggered...", Toast.LENGTH_SHORT).show()
 
-        val notificationHelper=NotificationHelper(context)
+        val notificationHelper= NotificationHelper(context)
 
 
         val geofencingEvent: GeofencingEvent = GeofencingEvent.fromIntent(intent)!!

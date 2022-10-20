@@ -15,7 +15,7 @@
         android:layout_margin="15dp"
         app:cardElevation="5dp"
         app:strokeWidth="1dp"
-        tools:context=".SettingActivity"
+        tools:context=".ui.SettingActivity"
         tools:ignore="MissingConstraints">
 
         <androidx.constraintlayout.widget.ConstraintLayout

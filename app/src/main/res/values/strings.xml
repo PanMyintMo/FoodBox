@@ -86,5 +86,6 @@
     <string name="_959975835125">959975835125</string>
     <string name="you_don_t_have_an_account">You don\'t have an account?</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="apiKey">AIzaSyDlfh4WuZJz51yTzzIiopDiWIA1CmntLC0</string>
 
 </resources>

@@ -1,15 +1,27 @@
 package com.pan.foodbox.ui
 
+import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest
 import android.app.PendingIntent
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Point
+import android.location.Location
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
@@ -18,30 +30,45 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.ButtCap
-import com.google.android.gms.maps.model.CircleOptions
-import com.google.android.gms.maps.model.JointType
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.maps.model.PolylineOptions
-import com.pan.foodbox.GeofenceHelper
-import com.pan.foodbox.R
-import com.pan.foodbox.adapter.InfoWindowAdapter
+import com.google.android.gms.maps.model.*
+import com.google.maps.android.PolyUtil
+import com.pan.foodbox.*
 import com.pan.foodbox.databinding.ActivityMapsBinding
+import com.pan.foodbox.map.GeofenceHelper
+import com.pan.foodbox.modDirection.MapDatas
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
+import retrofit2.http.Query
 
+
+@Suppress("CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION")
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
     private lateinit var geofenceHelper: GeofenceHelper
     private var GEOFENCE_ID: String = "SOME_GEOFENCE_ID"
     private val GEOFENGS_RADIUS = 200
     private lateinit var geofencingClient: GeofencingClient
+
     private lateinit var mMap: GoogleMap
-    private val TAG = "mapActivity"
 
+    private var fusedLocation: FusedLocationProviderClient? = null
+    private var originLocationLat: Double = 0.0
+    private var originalLocationLong: Double = 0.0
 
-    val mingalarRd = LatLng(16.8247013, 96.1269312)
-    val itVisionHub = LatLng(16.82521999076325, 96.1258090411045)
+    private var popupWindow: PopupWindow? = null
+    private var destinationLocation: LatLng? = null
 
+    private var mWith = 0
+    private var mHeight = 0
+    private var maker: Marker? = null
+
+    private val itVisionHub = LatLng(16.82521999076325, 96.1258090411045)
+
+    private val apiKey = "AIzaSyDlfh4WuZJz51yTzzIiopDiWIA1CmntLC0"
     private val FINE_LOCATION_ACCESS_REQUEST_CODE = 1001
     private val BACKGRAOUND_LOCATION_ACCESS_CODE = 1002
     private lateinit var binding: ActivityMapsBinding
@@ -50,71 +77,194 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         geofencingClient = LocationServices.getGeofencingClient(this)
         geofenceHelper = GeofenceHelper(this)
+        fusedLocation = LocationServices.getFusedLocationProviderClient(this)
+
+
+/*        val retrofit = Retrofit.Builder()
+            .addConverterFactory(GsonConverterFactory.create())
+            .baseUrl("https://maps.googleapis.com/")
+            .build()
+
+        apiRequest = retrofit.create(DirectionApiInterface::class.java)*/
+
+
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        // val sydney = LatLng(16.825222, 96.125808)
-        mMap.addMarker(MarkerOptions().position(mingalarRd).title("DNI"))
-        mMap.addMarker(MarkerOptions().position(itVisionHub).title("ITVisionHub"))
+        //    mMap.addMarker(location?.let { MarkerOptions().position(it).title("ITVisionHub") }!!)
+        //  mMap.addMarker(MarkerOptions().position(itVisionHub).title("ITVisionHub"))
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(mingalarRd))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(itVisionHub))
+        // mMap.moveCamera(location?.let { CameraUpdateFactory.newLatLng(it) }!!)
+        //  mMap.moveCamera(CameraUpdateFactory.newLatLng(itVisionHub))
 
-        enableUserLocation()
+        val origin = LatLng(originLocationLat, originalLocationLong)
+        mMap.addMarker(MarkerOptions().position(origin).title("Current Location"))
+
         mMap.setOnMapLongClickListener(this)
 
-        addCircle(mingalarRd, GEOFENGS_RADIUS.toFloat())
+        addCircle(origin, GEOFENGS_RADIUS.toFloat())
         addCircle(itVisionHub, GEOFENGS_RADIUS.toFloat())
-        addGeofence(mingalarRd, GEOFENGS_RADIUS.toFloat())
+        addGeofence(origin, GEOFENGS_RADIUS.toFloat())
         addGeofence(itVisionHub, GEOFENGS_RADIUS.toFloat())
-        // addPolyLine()
+
+        enableUserLocation()
+
         mMap.uiSettings.apply {
             isZoomControlsEnabled = true
         }
-        mMap.setInfoWindowAdapter(InfoWindowAdapter(this))
+        mMap.setOnMapClickListener {
+            popupWindow?.dismiss()
+            popupWindow = null
+        }
+        mMap.setOnMarkerClickListener {
+            if (popupWindow != null) {
+                popupWindow?.dismiss()
+            }
+            getCurrentLocation()
 
+            val view = layoutInflater.inflate(R.layout.infowindow, null)
+            val newPopupWindow = PopupWindow(
+                view,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            val display = this.display
+            val size = Point()
+            val title = view.findViewById<TextView>(R.id.title)
+            title.text = it.title.toString()
+            val btn = view.findViewById<Button>(R.id.btnDirection)
+
+
+            destinationLocation = LatLng(it.position.latitude, it.position.longitude)
+
+            mMap.addMarker(MarkerOptions().position(destinationLocation!!).title("ITVisiionHub"))
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(destinationLocation!!))
+
+            btn.setOnClickListener {
+
+                mMap.addMarker(MarkerOptions().position(origin))
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(origin, 14F))
+
+
+                //Using CoroutineScope
+
+                /*CoroutineScope(Dispatchers.IO)
+                    .launch {
+                        val factResponse = apiRequest!!.getDirection().execute()
+                        val fact = factResponse.body()
+                        launch(Dispatchers.Main) {
+                            if (factResponse.isSuccessful && fact != null) {
+                                drawPolyLine(factResponse)
+                            *//* MaterialAlertDialogBuilder(this@MapsActivity)
+                                    .setMessage(fact.status)
+                                    .setPositiveButton(android.R.string.ok, null)
+                                    .show()*//*
+                            }
+                        }
+                    }*/
+
+
+                val apiService = RetrofitClient.apiService(this)
+                apiService.getDirection(
+                    "$origin",
+                    "$destinationLocation",
+                    apiKey
+                )
+                    .enqueue(object : Callback<MapDatas> {
+                        override fun onResponse(
+                            call: Call<MapDatas>,
+                            response: Response<MapDatas>
+                        ) {
+                            drawPolyLine(response)
+                        }
+
+                        override fun onFailure(call: Call<MapDatas>, t: Throwable) {
+                            TODO("Not yet implemented")
+                        }
+
+                    })
+            }
+            display?.getCurrentSizeRange(size, size)
+            view.measure(size.x, size.y)
+            mWith = view.measuredWidth
+            mHeight = view.measuredHeight
+            maker = it
+            popupWindow = newPopupWindow
+            updateWindow()
+            false
+        }
+        mMap.setOnCameraMoveListener {
+            updateWindow()
+        }
     }
-/*
-    private fun addPolyLine() {
-        val polyline = mMap.addPolyline(PolylineOptions().apply {
-            add(mingalarRd, itVisionHub)
-            width(5f)
-            color(Color.BLUE)
-        })
 
-    }*/
+    private fun getCurrentLocation() {
+        if (enableUserLocation()) {
+            //final latitude and longitude
+            fusedLocation?.lastLocation?.addOnCompleteListener(this) { task ->
+                val location: Location? = task.result
+                if (location == null) {
+                    Toast.makeText(this, "Null received", Toast.LENGTH_SHORT).show()
+                } else {
+                    originLocationLat = location.latitude
+                    originalLocationLong = location.longitude
 
+                }
+            }
+        }
+    }
 
+    private fun drawPolyLine(response: Response<MapDatas>) {
+        val shape = response.body()?.routes?.get(0)?.overviewPolyline?.points
+        val polyline = PolylineOptions()
+            .addAll(PolyUtil.decode(shape))
+            .width(8f)
+            .color(Color.RED)
+        mMap.addPolyline(polyline)
+    }
 
-    private fun enableUserLocation() {
+    private fun updateWindow() {
+        if (maker != null && popupWindow != null) {
+            if (mMap.projection.visibleRegion.latLngBounds.contains(maker!!.position)) {
+                if (!popupWindow?.isShowing!!) {
+                    popupWindow!!.showAtLocation(View(this), Gravity.NO_GRAVITY, 0, 0)
+                }
+                val p = mMap.projection.toScreenLocation(maker!!.position)
+                popupWindow!!.update(p.x - mWith / 2, p.y - mHeight + 100, -1, -1)
+            } else {
+                popupWindow?.dismiss()
+            }
+        }
+    }
+
+    private fun enableUserLocation(): Boolean {
         if (ContextCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true
+            return true
         } else {
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
+                    ACCESS_FINE_LOCATION
                 )
             ) {
-                val array: Array<String> = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                val array: Array<String> = arrayOf(ACCESS_FINE_LOCATION)
                 ActivityCompat.requestPermissions(this, array, 100)
             } else {
-                val array: Array<String> = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                val array: Array<String> = arrayOf(ACCESS_FINE_LOCATION)
                 ActivityCompat.requestPermissions(this, array, 100)
             }
+            return false
         }
     }
 
@@ -128,12 +278,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             if (grantResults.isNotEmpty()) {
                 if (ActivityCompat.checkSelfPermission(
                         this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
+                        ACCESS_FINE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                         this,
                         Manifest.permission.ACCESS_COARSE_LOCATION
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
+                    getCurrentLocation()
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
                     // here to request the missing permissions, and then overriding
@@ -164,24 +315,24 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         if (Build.VERSION.SDK_INT >= 29) {
             if (ContextCompat.checkSelfPermission(
                     this,
-                    Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                   ACCESS_BACKGROUND_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
                 handleMapLongClick(latLng)
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                         this,
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                        ACCESS_BACKGROUND_LOCATION
                     )
                 ) {
                     //we show a dialog and ask for permission
                     val array: Array<String> =
-                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        arrayOf(ACCESS_BACKGROUND_LOCATION)
 
                     ActivityCompat.requestPermissions(this, array, BACKGRAOUND_LOCATION_ACCESS_CODE)
                 } else {
                     val array: Array<String> =
-                        arrayOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                        arrayOf(ACCESS_BACKGROUND_LOCATION)
                     ActivityCompat.requestPermissions(this, array, BACKGRAOUND_LOCATION_ACCESS_CODE)
                 }
             }
@@ -209,7 +360,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         val pendingIntent: PendingIntent = geofenceHelper.getPendingIntent()
         if (ActivityCompat.checkSelfPermission(
                 this,
-                Manifest.permission.ACCESS_FINE_LOCATION
+                ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
             // TODO: Consider calling
@@ -244,6 +395,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         circleOptions.fillColor(Color.argb(64, 255, 0, 0))
         circleOptions.strokeWidth(4F)
         mMap.addCircle(circleOptions)
+    }
+
+    private interface ApiService {
+        @GET("maps/api/directions/json")
+        fun getDirection(
+            @Query("origin") origin: String,
+            @Query("destination") destination: String,
+            @Query("key") apiKey: String
+        ): Call<MapDatas>
+
+    }
+
+    private object RetrofitClient {
+        fun apiService(context: Context): ApiService {
+            val retrofit = Retrofit.Builder()
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl("https://maps.googleapis.com")
+                .build()
+            return retrofit.create<ApiService>(ApiService::class.java)
+        }
     }
 }
 

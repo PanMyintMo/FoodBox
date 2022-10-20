@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.fragment
 
 import android.content.Intent
 import android.os.Bundle

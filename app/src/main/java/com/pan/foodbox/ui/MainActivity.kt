@@ -15,7 +15,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.pan.foodbox.R
-import com.pan.foodbox.SettingActivity
 import com.pan.foodbox.adapter.RestaurantAdapter
 import com.pan.foodbox.databinding.ActivityMainBinding
 import com.pan.foodbox.models.Restaurant

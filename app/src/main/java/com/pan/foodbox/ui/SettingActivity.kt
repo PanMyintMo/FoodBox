@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.ui
 
 import android.content.Context
 import android.content.Intent
@@ -7,9 +7,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.PopupMenu
 import android.widget.Toast
+import com.pan.foodbox.R
 import com.pan.foodbox.databinding.ActivitySettingBinding
-import com.pan.foodbox.ui.BaseActivity
-import com.pan.foodbox.ui.MainActivity
 
 class SettingActivity : BaseActivity() {
     private lateinit var sharedPreferences: SharedPreferences

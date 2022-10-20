@@ -41,17 +41,17 @@
         </meta-data>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbuejJQRYhBD5gz681slKQxKMitp1VJiM" />
+            android:value="AIzaSyCjtTJRajcCNs4BsYDlmrm5o3NWjdxsbaA"/>
 
         <activity
             android:name=".ui.MapsActivity"
             android:exported="false"
             android:label="@string/title_activity_maps" />
         <activity
-            android:name="com.pan.foodbox.SettingActivity"
+            android:name="com.pan.foodbox.ui.SettingActivity"
             android:exported="false" />
         <activity
-            android:name=".VerifyActivity"
+            android:name=".ui.VerifyActivity"
             android:exported="false"/>
         <activity
             android:name=".ui.RatingBarActivity"
@@ -88,14 +88,12 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
-
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.map
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -9,7 +9,7 @@ import com.google.android.gms.common.api.Status
 
 class SmsBroadcastReceiver :BroadcastReceiver() {
 
-    var smsBroadcastReceiverListener :SmsBroadcastReceiverListener ?=null
+    var smsBroadcastReceiverListener : SmsBroadcastReceiverListener?=null
     override fun onReceive(context: Context?, intent: Intent?) {
 
         if (SmsRetriever.SMS_RETRIEVED_ACTION == intent?.action){

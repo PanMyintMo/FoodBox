@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.map
 
 import android.app.PendingIntent
 import android.content.Context

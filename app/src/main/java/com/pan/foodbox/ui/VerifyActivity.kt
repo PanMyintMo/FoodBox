@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.ui
 
 import android.content.Context
 import android.net.ConnectivityManager
@@ -8,14 +8,12 @@ import android.view.View
 import android.widget.Toast
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
+import com.pan.foodbox.fragment.ProcessingDialog
 import com.pan.foodbox.databinding.ActivityVerifyBinding
-import com.pan.foodbox.databinding.ProcessingDialogBinding
-import com.pan.foodbox.ui.BaseActivity
 import java.util.concurrent.TimeUnit
 
 
 class VerifyActivity : BaseActivity() {
-    private lateinit var dialogBinding: ProcessingDialogBinding
     private var currentStep = 0
     private lateinit var binding: ActivityVerifyBinding
     private lateinit var firebaseAuth: FirebaseAuth
@@ -79,7 +77,7 @@ class VerifyActivity : BaseActivity() {
             } else {
                 binding.stepView.done(true)
             }
-          val dialog=ProcessingDialog()
+          val dialog= ProcessingDialog()
             dialog.show(supportFragmentManager,"customDialog")
         }
     }

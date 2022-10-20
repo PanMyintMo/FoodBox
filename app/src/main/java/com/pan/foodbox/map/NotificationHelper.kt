@@ -1,4 +1,4 @@
-package com.pan.foodbox
+package com.pan.foodbox.map
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,6 +12,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.pan.foodbox.R
 import com.pan.foodbox.ui.MapsActivity
 import kotlin.random.Random
 
