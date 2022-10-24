@@ -59,10 +59,10 @@
             android:id="@+id/txtLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hledan,Kamaryut"
+            android:text="Kyaungshae,Hledan Road, Hledan Kyaung Ashae,Kamaryut Tsp,Yangon ,Yagon"
             android:textSize="12sp"
-           android:maxLines="1"
-            android:lines="1"
+             android:maxLines="2"
+            android:lines="2"
             android:layout_marginStart="5dp"
             android:layout_gravity="center_vertical"
  />
@@ -87,7 +87,7 @@
             android:layout_gravity="center_vertical" app:layout_constraintHorizontal_bias="0.052"
            />
     </LinearLayout>
-    <Button
+   <!-- <Button
         android:id="@+id/btnDirection"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
@@ -97,7 +97,7 @@
         android:layout_width="100dp"
         android:layout_height="50dp">
 
-    </Button>
+    </Button>-->
 </LinearLayout>
 
 </LinearLayout>

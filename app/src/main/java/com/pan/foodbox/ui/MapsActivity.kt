@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
@@ -30,9 +31,9 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.maps.android.PolyUtil
 import com.pan.foodbox.*
+import com.pan.foodbox.apiInterface.DirectionApiInterface
 import com.pan.foodbox.databinding.ActivityMapsBinding
 import com.pan.foodbox.map.GeofenceHelper
 import com.pan.foodbox.modDirection.MapDatas
@@ -41,8 +42,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Query
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
@@ -51,63 +50,55 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     private var GEOFENCE_ID: String = "SOME_GEOFENCE_ID"
     private val GEOFENGS_RADIUS = 200
     private lateinit var geofencingClient: GeofencingClient
-
+    private var apiRequest: DirectionApiInterface? = null
     private lateinit var mMap: GoogleMap
-
     private var fusedLocation: FusedLocationProviderClient? = null
     private var originLocationLat: Double = 0.0
     private var originalLocationLong: Double = 0.0
-
     private var popupWindow: PopupWindow? = null
     private var destinationLocation: LatLng? = null
-
     private var mWith = 0
     private var mHeight = 0
     private var maker: Marker? = null
-
-    private val itVisionHub = LatLng(16.822231, 96.122206)
-
+    private var origin: String = "0.0,0.0"
+    private val itVisionHub = LatLng(16.784796, 96.181905)
     private val apiKey = "AIzaSyDlfh4WuZJz51yTzzIiopDiWIA1CmntLC0"
     private val FINE_LOCATION_ACCESS_REQUEST_CODE = 1001
     private val BACKGRAOUND_LOCATION_ACCESS_CODE = 1002
     private lateinit var binding: ActivityMapsBinding
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        supportActionBar?.hide()
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         geofencingClient = LocationServices.getGeofencingClient(this)
         geofenceHelper = GeofenceHelper(this)
         fusedLocation = LocationServices.getFusedLocationProviderClient(this)
-
-
-/*        val retrofit = Retrofit.Builder()
+        val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .baseUrl("https://maps.googleapis.com/")
             .build()
-
-        apiRequest = retrofit.create(DirectionApiInterface::class.java)*/
-
-
+        apiRequest = retrofit.create(DirectionApiInterface::class.java)
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        //for current locatiion
-        val origin = LatLng(originLocationLat, originalLocationLong)
-
         destinationLocation = LatLng(itVisionHub.latitude, itVisionHub.longitude)
-        mMap.addMarker(MarkerOptions().position(destinationLocation!!).title("ITVisiionHub"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(destinationLocation!!))
 
+        mMap.addMarker(MarkerOptions().position(destinationLocation!!).title("ITVisionHub"))
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(destinationLocation!!))
         mMap.setOnMapLongClickListener(this)
 
-        addCircle(origin, GEOFENGS_RADIUS.toFloat())
+        // addCircle(origin, GEOFENGS_RADIUS.toFloat())
         addCircle(itVisionHub, GEOFENGS_RADIUS.toFloat())
-        addGeofence(origin, GEOFENGS_RADIUS.toFloat())
+        //   addGeofence(origin, GEOFENGS_RADIUS.toFloat())
         addGeofence(itVisionHub, GEOFENGS_RADIUS.toFloat())
 
         enableUserLocation()
@@ -134,10 +125,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             val size = Point()
             val title = view.findViewById<TextView>(R.id.title)
             title.text = it.title.toString()
-            val btn = view.findViewById<Button>(R.id.btnDirection)
+           /* val btn = view.findViewById<Button>(R.id.btnDirection)
             btn.setOnClickListener {
                 //Using CoroutineScope
-                /*CoroutineScope(Dispatchers.IO)
+                CoroutineScope(Dispatchers.IO)
                     .launch {
                         val factResponse = apiRequest!!.getDirection().execute()
                         val fact = factResponse.body()
@@ -150,30 +141,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                                     .show()*//*
                             }
                         }
-                    }*/
-                val apiService = RetrofitClient.apiService()
-                apiService.getDirection(
-                    "$origin",
-                    "$destinationLocation",
-                    apiKey
-                )
-                    .enqueue(object : Callback<MapDatas> {
-                        override fun onResponse(
-                            call: Call<MapDatas>,
-                            response: Response<MapDatas>
-                        ) {
-                            if (response.body()?.routes?.size!! > 0){
-                                Toast.makeText(this@MapsActivity, "route is grater than 0", Toast.LENGTH_SHORT).show()
-                            drawPolyLine(response)
-                        }
-                            else{
-                                Toast.makeText(this@MapsActivity, "route size is zero", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                        override fun onFailure(call: Call<MapDatas>, t: Throwable) {
-                        }
-                    })
-            }
+                    }
+            }*/
             display?.getCurrentSizeRange(size, size)
             view.measure(size.x, size.y)
             mWith = view.measuredWidth
@@ -194,27 +163,45 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             fusedLocation?.lastLocation?.addOnCompleteListener(this) { task ->
                 val location: Location? = task.result
                 if (location == null) {
-                    Toast.makeText(this, "Null received", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Turn on your Location", Toast.LENGTH_SHORT).show()
                 } else {
                     originLocationLat = location.latitude
                     originalLocationLong = location.longitude
-                    Toast.makeText(this@MapsActivity, "$originLocationLat,$originalLocationLong", Toast.LENGTH_SHORT).show()
-                    
-                    MaterialAlertDialogBuilder(this@MapsActivity)
-                        .setMessage(originLocationLat.toInt())
-                        .setMessage(originalLocationLong.toInt())
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show()
+                    origin = "$originLocationLat,$originalLocationLong"
+                    requestPolyline()
                 }
             }
         }
+    }
+
+    private fun requestPolyline() {
+        apiRequest!!.getDirection(
+            "$originLocationLat,$originalLocationLong",
+            "${destinationLocation?.latitude},${destinationLocation?.longitude}",
+            apiKey
+        ).enqueue(object : Callback<MapDatas> {
+            override fun onResponse(
+                call: Call<MapDatas>,
+                response: Response<MapDatas>
+            ) {
+                if (response.body()?.routes?.size!! > 0) {
+                    drawPolyLine(response)
+                } else {
+                    Toast.makeText(this@MapsActivity, "route size is zero", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+
+            override fun onFailure(call: Call<MapDatas>, t: Throwable) {
+            }
+        })
     }
 
     private fun drawPolyLine(response: Response<MapDatas>) {
         val shape = response.body()?.routes?.get(0)?.overviewPolyline?.points
         val polyline = PolylineOptions()
             .addAll(PolyUtil.decode(shape))
-            .width(8f)
+            .width(10f)
             .color(Color.RED)
         mMap.addPolyline(polyline)
     }
@@ -307,7 +294,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                     ACCESS_BACKGROUND_LOCATION
                 ) == PackageManager.PERMISSION_GRANTED
             ) {
-                handleMapLongClick(latLng)
+                //  handleMapLongClick(latLng)
             } else {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(
                         this,
@@ -326,19 +313,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                 }
             }
         } else {
-            handleMapLongClick(latLng)
+            // handleMapLongClick(latLng)
         }
     }
 
-    private fun handleMapLongClick(latLng: LatLng) {
-        mMap.clear()
-        addMarker(latLng)
-        addCircle(latLng, GEOFENGS_RADIUS.toFloat())
-        addGeofence(latLng, GEOFENGS_RADIUS.toFloat())
-        addGeofence(latLng, GEOFENGS_RADIUS.toFloat())
-    }
 
-    private fun addGeofence(latLng: LatLng,radius: Float) {
+    private fun addGeofence(latLng: LatLng, radius: Float) {
         val geofence = geofenceHelper.getGeofence(
             GEOFENCE_ID,
             latLng,
@@ -386,16 +366,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         mMap.addCircle(circleOptions)
     }
 
-    private interface ApiService {
-        @GET("/maps/api/directions/json?")
-        fun getDirection(
-            @Query("origin") origin: String,
-            @Query("destination") destination: String,
-            @Query("key") apiKey: String
-        ): Call<MapDatas>
-
-    }
-
+    /*   private interface ApiService {
+           @GET("maps/api/directions/json?")
+           fun getDirection(
+               @Query("origin") origin: String,
+               @Query("destination") destination: String,
+               @Query("key") apiKey: String
+           ): Call<MapDatas>
+   
+       }*/
+/*
     private object RetrofitClient {
         fun apiService(): ApiService {
             val retrofit = Retrofit.Builder()
@@ -404,7 +384,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                 .build()
             return retrofit.create<ApiService>(ApiService::class.java)
         }
-    }
+    }*/
 }
 
 
