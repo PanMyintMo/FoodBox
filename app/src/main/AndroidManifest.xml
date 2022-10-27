@@ -43,6 +43,7 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCjtTJRajcCNs4BsYDlmrm5o3NWjdxsbaA"/>
 
+
         <activity
             android:name=".ui.MapsActivity"
             android:exported="false"

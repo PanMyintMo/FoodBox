@@ -14,14 +14,20 @@ android {
         applicationId "com.pan.foodbox"
         minSdk 21
         targetSdk 33
-        versionCode 4
-        versionName "1.4.0"
+        versionCode 6
+        versionName "1.6.0"
+
 
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        Properties properties=new Properties()
+        properties.load(project.rootProject.file("local.properties").newDataInputStream())
+        buildConfigField "String","API_KEY","\"${properties.getProperty("API_KEY")}\""
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -31,7 +37,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             debuggable = false
@@ -51,11 +57,11 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.9.0'
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.6.1'
+    implementation 'com.google.android.material:material:1.7.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.activity:activity-ktx:1.6.0'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.2'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.5.2'
+    implementation 'androidx.activity:activity-ktx:1.6.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
 
     testImplementation 'junit:junit:4.13.2'
@@ -79,10 +85,10 @@ dependencies {
     androidTestImplementation "androidx.room:room-testing:2.4.3"
     //lifecycle
     //viewModel
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.0-alpha03")
     implementation "androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03"
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0-alpha02")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.0-alpha03")
+
     //jsoup for html parser
     implementation 'org.jsoup:jsoup:1.15.2'
     //firebase
@@ -92,8 +98,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.firebaseui:firebase-ui-storage:8.0.0'
-    implementation 'com.google.firebase:firebase-auth-ktx'
-    implementation 'com.google.android.gms:play-services-safetynet:18.0.1'
+    implementation ('com.google.firebase:firebase-auth-ktx'){
+        exclude module: "play-services-safetynet"
+    }
     //pinview
     implementation 'io.github.chaosleung:pinview:1.4.4'
     //stepview
@@ -117,10 +124,10 @@ dependencies {
 
     //Coroutine Scrope
     implementation('org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4')
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.0-alpha03")
 
     //retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.okhttp3:okhttp:4.9.0'
 }

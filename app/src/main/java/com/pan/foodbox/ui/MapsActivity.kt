@@ -42,6 +42,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.Properties
 
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
@@ -62,7 +63,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     private var maker: Marker? = null
     private var origin: String = "0.0,0.0"
     private val itVisionHub = LatLng(16.784796, 96.181905)
-    private val apiKey = "AIzaSyDlfh4WuZJz51yTzzIiopDiWIA1CmntLC0"
+
+    private var apikey=""
     private val FINE_LOCATION_ACCESS_REQUEST_CODE = 1001
     private val BACKGRAOUND_LOCATION_ACCESS_CODE = 1002
     private lateinit var binding: ActivityMapsBinding
@@ -72,9 +74,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         super.onCreate(savedInstanceState)
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         supportActionBar?.hide()
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
+        apikey=BuildConfig.API_KEY
+
         val mapFragment = supportFragmentManager
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -178,7 +182,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         apiRequest!!.getDirection(
             "$originLocationLat,$originalLocationLong",
             "${destinationLocation?.latitude},${destinationLocation?.longitude}",
-            apiKey
+            apikey
         ).enqueue(object : Callback<MapDatas> {
             override fun onResponse(
                 call: Call<MapDatas>,
