@@ -1,53 +1,64 @@
 package com.pan.foodbox.ui
 
+import android.Manifest
 import android.Manifest.permission.ACCESS_BACKGROUND_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.Manifest
+import android.app.AlertDialog
 import android.app.PendingIntent
+import android.content.Context
+import android.content.DialogInterface
+import android.content.Intent
+import android.content.IntentSender
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Point
 import android.location.Location
+import android.location.LocationManager
+import android.location.LocationRequest
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.Button
 import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.Geofence
-import com.google.android.gms.location.GeofencingClient
-import com.google.android.gms.location.GeofencingRequest
-import com.google.android.gms.location.LocationServices
+import com.google.android.datatransport.runtime.ExecutionModule_ExecutorFactory.create
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.location.*
+import com.google.android.gms.location.Priority
+import com.google.android.gms.location.Priority.PRIORITY_HIGH_ACCURACY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import com.google.android.gms.tasks.Task
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.maps.android.PolyUtil
 import com.pan.foodbox.*
+import com.pan.foodbox.R
 import com.pan.foodbox.apiInterface.DirectionApiInterface
 import com.pan.foodbox.databinding.ActivityMapsBinding
-import com.pan.foodbox.map.GeofenceHelper
+//import com.pan.foodbox.map.GeofenceHelper
 import com.pan.foodbox.modDirection.MapDatas
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.Properties
 
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
-    private lateinit var geofenceHelper: GeofenceHelper
+  //  private lateinit var geofenceHelper: GeofenceHelper
     private var GEOFENCE_ID: String = "SOME_GEOFENCE_ID"
     private val GEOFENGS_RADIUS = 200
     private lateinit var geofencingClient: GeofencingClient
@@ -63,10 +74,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
     private var maker: Marker? = null
     private var origin: String = "0.0,0.0"
     private val itVisionHub = LatLng(16.784796, 96.181905)
+    private lateinit var locationInterval: LocationRequest
 
-    private var apikey=""
+    //googlemapi error code
+    private var RES_ERROR_CODE = 201
+    private lateinit var locationRequest: com.google.android.gms.location.LocationRequest
+
+    private var apikey = ""
     private val FINE_LOCATION_ACCESS_REQUEST_CODE = 1001
-    private val BACKGRAOUND_LOCATION_ACCESS_CODE = 1002
+  //  private val BACKGRAOUND_LOCATION_ACCESS_CODE = 1002
     private lateinit var binding: ActivityMapsBinding
 
 
@@ -75,15 +91,29 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.hide()
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
 
-        apikey=BuildConfig.API_KEY
+        apikey = BuildConfig.API_KEY
 
-        val mapFragment = supportFragmentManager
-            .findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
+        if (checkGooglePlayServices()) {
+            val mapFragment = supportFragmentManager
+                .findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this)
+        } else {
+            Toast.makeText(
+                this@MapsActivity,
+                "Google Play Service Not Available",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
         geofencingClient = LocationServices.getGeofencingClient(this)
-        geofenceHelper = GeofenceHelper(this)
+        //geofenceHelper = GeofenceHelper(this)
+
+
         fusedLocation = LocationServices.getFusedLocationProviderClient(this)
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
@@ -98,19 +128,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
 
         mMap.addMarker(MarkerOptions().position(destinationLocation!!).title("ITVisionHub"))
         mMap.moveCamera(CameraUpdateFactory.newLatLng(destinationLocation!!))
-        mMap.setOnMapLongClickListener(this)
+        //mMap.setOnMapLongClickListener(this)
 
         // addCircle(origin, GEOFENGS_RADIUS.toFloat())
         addCircle(itVisionHub, GEOFENGS_RADIUS.toFloat())
         //   addGeofence(origin, GEOFENGS_RADIUS.toFloat())
-        addGeofence(itVisionHub, GEOFENGS_RADIUS.toFloat())
+        //addGeofence(itVisionHub, GEOFENGS_RADIUS.toFloat())
 
-        enableUserLocation()
-        getCurrentLocation()
 
         mMap.uiSettings.apply {
             isZoomControlsEnabled = true
         }
+        checkGps()
         mMap.setOnMapClickListener {
             popupWindow?.dismiss()
             popupWindow = null
@@ -129,17 +158,17 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             val size = Point()
             val title = view.findViewById<TextView>(R.id.title)
             title.text = it.title.toString()
-           /* val btn = view.findViewById<Button>(R.id.btnDirection)
-            btn.setOnClickListener {
-                //Using CoroutineScope
-                CoroutineScope(Dispatchers.IO)
-                    .launch {
-                        val factResponse = apiRequest!!.getDirection().execute()
-                        val fact = factResponse.body()
-                        launch(Dispatchers.Main) {
-                            if (factResponse.isSuccessful && fact != null) {
-                                drawPolyLine(factResponse)
-                            *//* MaterialAlertDialogBuilder(this@MapsActivity)
+            /* val btn = view.findViewById<Button>(R.id.btnDirection)
+             btn.setOnClickListener {
+                 //Using CoroutineScope
+                 CoroutineScope(Dispatchers.IO)
+                     .launch {
+                         val factResponse = apiRequest!!.getDirection().execute()
+                         val fact = factResponse.body()
+                         launch(Dispatchers.Main) {
+                             if (factResponse.isSuccessful && fact != null) {
+                                 drawPolyLine(factResponse)
+                             *//* MaterialAlertDialogBuilder(this@MapsActivity)
                                     .setMessage(fact.status)
                                     .setPositiveButton(android.R.string.ok, null)
                                     .show()*//*
@@ -161,18 +190,70 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         }
     }
 
+    private fun checkGps() {
+        val locationManager: LocationManager =
+            applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        var gpsEnable = false
+        var networkEnable = false
+
+        try {
+            gpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+        } catch (e: Exception) {
+        }
+        try {
+            networkEnable = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        } catch (e: Exception) {
+        }
+        if (!gpsEnable && !networkEnable) {
+            AlertDialog.Builder(this)
+                .setTitle("GPS is require for this app to work,Please enable GPS!")
+                .setMessage("Do you want to enable location")
+                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                    gpsEnable()
+                    getCurrentLocation()
+                    mMap.isMyLocationEnabled = true
+                })
+                .setNegativeButton(R.string.cancel, null)
+                .setCancelable(false)
+                .show()
+        } else {
+            isLocationEnabled()
+            getCurrentLocation()
+
+
+        }
+    }
+
+    private fun gpsEnable() {
+        val intent = Intent()
+        intent.action = Settings.ACTION_LOCATION_SOURCE_SETTINGS
+        startActivity(intent)
+
+     //   activityResult.launch(intent, null)
+
+    }
+
+  /*  private val activityResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val resData = result.data
+            Toast.makeText(this@MapsActivity, "$resData", Toast.LENGTH_SHORT).show()
+
+        }*/
+
     private fun getCurrentLocation() {
         if (enableUserLocation()) {
-            //final latitude and longitude
-            fusedLocation?.lastLocation?.addOnCompleteListener(this) { task ->
-                val location: Location? = task.result
-                if (location == null) {
-                    Toast.makeText(this, "Turn on your Location", Toast.LENGTH_SHORT).show()
-                } else {
-                    originLocationLat = location.latitude
-                    originalLocationLong = location.longitude
-                    origin = "$originLocationLat,$originalLocationLong"
-                    requestPolyline()
+            if (isLocationEnabled()) {
+                //final latitude and longitude
+                fusedLocation?.lastLocation?.addOnCompleteListener(this) { task ->
+                    val location: Location? = task.result
+                    if (location == null) {
+                        //Toast.makeText(this, "Turn on your Location", Toast.LENGTH_SHORT).show()
+                    } else {
+                        originLocationLat = location.latitude
+                        originalLocationLong = location.longitude
+                        origin = "$originLocationLat,$originalLocationLong"
+                        requestPolyline()
+                    }
                 }
             }
         }
@@ -199,6 +280,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             override fun onFailure(call: Call<MapDatas>, t: Throwable) {
             }
         })
+    }
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     private fun drawPolyLine(response: Response<MapDatas>) {
@@ -265,20 +354,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                     ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     getCurrentLocation()
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
                     return
                 }
                 mMap.isMyLocationEnabled = true
             }
         }
 
-        if (requestCode == BACKGRAOUND_LOCATION_ACCESS_CODE) {
+        /*if (requestCode == BACKGRAOUND_LOCATION_ACCESS_CODE) {
             if (grantResults.isNotEmpty()) {
                 // Toast.makeText(this, "You can add geofence..", Toast.LENGTH_SHORT).show()
             } else {
@@ -288,10 +370,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                     Toast.LENGTH_SHORT
                 ).show()
             }
-        }
+        }*/
     }
 
-    override fun onMapLongClick(latLng: LatLng) {
+    /*override fun onMapLongClick(latLng: LatLng) {
         if (Build.VERSION.SDK_INT >= 29) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -319,10 +401,33 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         } else {
             // handleMapLongClick(latLng)
         }
+    }*/
+
+
+    private fun checkGooglePlayServices(): Boolean {
+        val googleApiAvailability = GoogleApiAvailability.getInstance()
+        val res = googleApiAvailability.isGooglePlayServicesAvailable(this)
+        if (res == ConnectionResult.SUCCESS) {
+            return true
+        } else if (googleApiAvailability.isUserResolvableError(res)) {
+            val dialog = googleApiAvailability.getErrorDialog(
+                this,
+                res,
+                RES_ERROR_CODE,
+                DialogInterface.OnCancelListener {
+
+                    Toast.makeText(this@MapsActivity, "User cancel dialog", Toast.LENGTH_SHORT)
+                        .show()
+
+                })
+            dialog?.show()
+
+        }
+        return false
     }
 
 
-    private fun addGeofence(latLng: LatLng, radius: Float) {
+/*    private fun addGeofence(latLng: LatLng, radius: Float) {
         val geofence = geofenceHelper.getGeofence(
             GEOFENCE_ID,
             latLng,
@@ -336,13 +441,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
                 ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             return
         }
         geofencingClient.addGeofences(geofenceRequest, pendingIntent)
@@ -352,7 +451,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
             .addOnFailureListener { _ ->
                 // Log.d(TAG, "onFailure: ${it}")
             }
-    }
+    }*/
 
     private fun addMarker(latLng: LatLng) {
         val markerOptions = MarkerOptions().position(latLng)
@@ -370,15 +469,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, GoogleMap.OnMapLon
         mMap.addCircle(circleOptions)
     }
 
-    /*   private interface ApiService {
-           @GET("maps/api/directions/json?")
-           fun getDirection(
-               @Query("origin") origin: String,
-               @Query("destination") destination: String,
-               @Query("key") apiKey: String
-           ): Call<MapDatas>
-   
-       }*/
+
+/*   private interface ApiService {
+       @GET("maps/api/directions/json?")
+       fun getDirection(
+           @Query("origin") origin: String,
+           @Query("destination") destination: String,
+           @Query("key") apiKey: String
+       ): Call<MapDatas>
+
+   }*/
 /*
     private object RetrofitClient {
         fun apiService(): ApiService {

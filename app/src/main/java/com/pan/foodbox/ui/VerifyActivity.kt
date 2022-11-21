@@ -6,6 +6,10 @@ import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import com.google.android.gms.tasks.Task
+import com.google.android.play.core.integrity.IntegrityManagerFactory
+import com.google.android.play.core.integrity.IntegrityTokenRequest
+import com.google.android.play.core.integrity.IntegrityTokenResponse
 import com.google.firebase.FirebaseException
 import com.google.firebase.auth.*
 import com.pan.foodbox.fragment.ProcessingDialog
@@ -25,6 +29,52 @@ class VerifyActivity : BaseActivity() {
         binding = ActivityVerifyBinding.inflate(layoutInflater)
         setContentView(binding.root)
         firebaseAuth = FirebaseAuth.getInstance()
+
+/*
+
+        //google play integrity
+
+        // Receive the nonce from the secure server.
+        val nonce: String =""
+
+        // Create an instance of a manager.
+        val integrityManager =
+            IntegrityManagerFactory.create(applicationContext)
+
+        // Request the integrity token by providing a nonce.
+        val integrityTokenResponse: Task<IntegrityTokenResponse> =
+            integrityManager.requestIntegrityToken(
+                IntegrityTokenRequest.builder()
+                    .setNonce(nonce)
+                    .build()
+            )
+        // base64OfEncodedDecryptionKey is provided through Play Console.
+        var decryptionKeyBytes: ByteArray =
+            Base64.decode(base64OfEncodedDecryptionKey, Base64.DEFAULT)
+
+        // Deserialized encryption (symmetric) key.
+        var decryptionKey: SecretKey = SecretKeySpec(
+            decryptionKeyBytes,
+            */
+/* offset= *//*
+ 0,
+            AES_KEY_SIZE_BYTES,
+            AES_KEY_TYPE
+        )
+
+        // base64OfEncodedVerificationKey is provided through Play Console.
+        var encodedVerificationKey: ByteArray =
+            Base64.decode(base64OfEncodedVerificationKey, Base64.DEFAULT)
+
+        // Deserialized verification (public) key.
+        var verificationKey: PublicKey = KeyFactory.getInstance(EC_KEY_TYPE)
+            .generatePublic(X509EncodedKeySpec(encodedVerificationKey))
+
+
+*/
+
+
+
         binding.stepView.setStepsNumber(3)
         binding.stepView.go(0, true)
         binding.layout1.visibility = View.VISIBLE
@@ -77,8 +127,8 @@ class VerifyActivity : BaseActivity() {
             } else {
                 binding.stepView.done(true)
             }
-          val dialog= ProcessingDialog()
-            dialog.show(supportFragmentManager,"customDialog")
+            val dialog = ProcessingDialog()
+            dialog.show(supportFragmentManager, "customDialog")
         }
     }
 
@@ -104,6 +154,7 @@ class VerifyActivity : BaseActivity() {
             binding.pinView.append(code)
             verifyCode(code)
         }
+
         override fun onVerificationFailed(p0: FirebaseException) {
             Toast.makeText(
                 this@VerifyActivity,

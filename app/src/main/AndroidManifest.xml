@@ -3,13 +3,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pan.foodbox">
 
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--<uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -35,13 +39,14 @@
              "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
         -->
 
-        <meta-data android:name="com.google.android.gms.version"
+        <meta-data
+            android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version">
 
         </meta-data>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCjtTJRajcCNs4BsYDlmrm5o3NWjdxsbaA"/>
+            android:value="AIzaSyCjtTJRajcCNs4BsYDlmrm5o3NWjdxsbaA" />
 
 
         <activity
@@ -53,7 +58,7 @@
             android:exported="false" />
         <activity
             android:name=".ui.VerifyActivity"
-            android:exported="false"/>
+            android:exported="false" />
         <activity
             android:name=".ui.RatingBarActivity"
             android:exported="false" />
@@ -95,6 +100,7 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
+
         </activity>
     </application>
 

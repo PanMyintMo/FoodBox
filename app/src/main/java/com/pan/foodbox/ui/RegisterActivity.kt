@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream
 class RegisterActivity : BaseActivity() {
 
     private lateinit var binding: ActivityRegisterBinding
+    private  var emailList: MutableList<String>? = arrayListOf()
 
     private var uri: Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,11 +36,10 @@ class RegisterActivity : BaseActivity() {
         setContentView(binding.root)
         supportActionBar?.title = "Register"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+        checkMail()
         binding.btnRegister.setOnClickListener {
             checkDetailRegister()
         }
-
         binding.imgProfile.setOnClickListener {
             pickImage()
         }
@@ -52,12 +52,25 @@ class RegisterActivity : BaseActivity() {
                 val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                 intent.flags =
                     Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-
                 startActivity(intent)
 
             }
         }
-        return super.onOptionsItemSelected(item)
+        return super.onOptionsItemSelected(item)      
+    }
+    private fun checkMail() {
+        val db=Firebase.firestore
+        db.collection("users")
+            .get()
+            .addOnSuccessListener {
+                for (doc in it){
+                    emailList?.add(doc["email"].toString())
+                 //   Toast.makeText(this, "$emailList", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "$it", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun updateUI(isCheck: Boolean) {
@@ -72,7 +85,6 @@ class RegisterActivity : BaseActivity() {
         val pass = binding.editPass.text.toString()
         val confirmPass = binding.confirmPassword.text.toString()
 
-
         if (TextUtils.isEmpty(name)) {
             binding.editName.error = "Name is required"
             binding.editName.requestFocus()
@@ -85,7 +97,8 @@ class RegisterActivity : BaseActivity() {
         } else if (TextUtils.isEmpty(confirmPass)) {
             binding.confirmPassword.error = "Confirm Password is required"
             binding.confirmPassword.requestFocus()
-        } else {
+        }
+        else {
             if (pass != confirmPass) {
                 Toast.makeText(
                     this@RegisterActivity,
@@ -96,19 +109,29 @@ class RegisterActivity : BaseActivity() {
                 binding.confirmPassword.requestFocus()
             } else {
                 if (checkNetwork()) {
+                    if (emailList?.contains(email)!!) {
+                        Toast.makeText(this, "Email is already register!!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                    else {
                         startRegister(name, email, pass)
                     }
-                else{
-                    Toast.makeText(this@RegisterActivity, "Check your internet connection", Toast.LENGTH_SHORT).show()
                 }
-
+                else{
+                    Toast.makeText(
+                        this@RegisterActivity,
+                        "Check your internet connection",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
 
-    private fun startRegister(name: String, email: String, pass: String) {
 
-            updateUI(true)
+
+    private fun startRegister(name: String, email: String, pass: String) {
+        updateUI(true)
             FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, pass)
                 .addOnCompleteListener {
                     updateUI(false)
@@ -117,6 +140,9 @@ class RegisterActivity : BaseActivity() {
                             uploadProfileImage(user.uid, name, email)
                         }
                     }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this@RegisterActivity, it.message, Toast.LENGTH_SHORT).show()
                 }
         }
     private fun pickImage() {
@@ -145,7 +171,7 @@ class RegisterActivity : BaseActivity() {
             val inputStream = contentResolver.openInputStream(uri)
             BitmapFactory.decodeStream(inputStream)
         } else {
-            BitmapFactory.decodeResource(resources, R.drawable.user_image)
+            BitmapFactory.decodeResource(resources, R.drawable.userp)
         }
     }
 
@@ -192,13 +218,14 @@ class RegisterActivity : BaseActivity() {
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val intent = Intent(this@RegisterActivity, MainActivity::class.java)
+                    Toast.makeText(this, "Registration is successful!", Toast.LENGTH_SHORT).show()
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
                     startActivity(intent)
                     finish()
                 }
             }
             .addOnFailureListener {
-                Toast.makeText(this@RegisterActivity, "$it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@RegisterActivity, it.message, Toast.LENGTH_SHORT).show()
             }
     }
 
@@ -210,5 +237,4 @@ class RegisterActivity : BaseActivity() {
 
         return networkCapabilities != null && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
-
 }

@@ -47,7 +47,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"
             android:padding="2dp"
-            android:src="@drawable/user_image"
+            android:src="@drawable/ic_baseline_person_add"
             android:theme="@style/userImageShape"
             app:strokeWidth="2dp">
 
@@ -89,7 +89,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/mgmg_gmail_com"
-                android:inputType="textEmailAddress"></com.google.android.material.textfield.TextInputEditText>
+                android:inputType="textEmailAddress">
+
+            </com.google.android.material.textfield.TextInputEditText>
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -151,7 +153,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:text="@string/register"
-                android:textAllCaps="false"></com.google.android.material.button.MaterialButton>
+                android:textAllCaps="false">
+
+            </com.google.android.material.button.MaterialButton>
         </LinearLayout>
     </RelativeLayout>
 

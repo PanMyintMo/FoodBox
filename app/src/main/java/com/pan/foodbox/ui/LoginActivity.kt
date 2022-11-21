@@ -24,7 +24,10 @@ class LoginActivity : BaseActivity() {
         setContentView(binding.root)
         firebaseAuth = FirebaseAuth.getInstance()
         supportActionBar?.hide()
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         updateUI(false)
         binding.textLogin.setOnClickListener {
             checkLoginDetail()
@@ -40,12 +43,13 @@ class LoginActivity : BaseActivity() {
     private fun updateUI(login: Boolean) {
         binding.textProgress.visibility = if (login) View.VISIBLE else View.GONE
         binding.textProgress.isIndeterminate = false
-        binding.textLogin.isEnabled=!login
+        binding.textLogin.isEnabled = !login
 
     }
 
     private fun updatedUI(isCheck: Boolean) {
         binding.textProgress.visibility = if (isCheck) View.VISIBLE else View.GONE
+        binding.textLogin.isEnabled = !isCheck
 
     }
 
@@ -61,46 +65,44 @@ class LoginActivity : BaseActivity() {
             binding.textPass.error = "Password is required"
             binding.textLoginMail.requestFocus()
         } else {
-            loginUser(email, pass)
+            if(checkNetwork()){
+                loginUser(email, pass)
+            }
+            else{
+                Toast.makeText(this, "Check your internet connection!", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
     private fun loginUser(email: String, pass: String) {
-        if (checkNetwork()) {
-            updateUI(true)
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
-                .addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        updatedUI(true)
-                        updateUI(false)
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.flags =
-                            Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        finish()
-                    } else {
 
-                        updatedUI(false)
-                        Toast.makeText(
-                            this@LoginActivity,
-                            "Check your internet connection",
-                            Toast.LENGTH_SHORT
-                        ).show()
-
-                    }
-                }
-                .addOnFailureListener {
-                    Snackbar.make(
-                        binding.root, it.message.toString(), Snackbar.LENGTH_SHORT
+        updateUI(true)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener {
+                if (it.isSuccessful) {
+                    updatedUI(true)
+                    updateUI(false)
+                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    intent.flags =
+                        Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    startActivity(intent)
+                    finish()
+                } else {
+                    updatedUI(false)
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Check your Email and Password!",
+                        Toast.LENGTH_SHORT
                     ).show()
+
                 }
-        } else {
+            }
+            .addOnFailureListener {
+                Snackbar.make(
+                    binding.root, it.message.toString(), Snackbar.LENGTH_SHORT
+                ).show()
+            }
 
-            Toast.makeText(this@LoginActivity, "Check your internet connection", Toast.LENGTH_SHORT)
-                .show()
-            updatedUI(true)
-
-        }
     }
 
     private fun checkNetwork(): Boolean {

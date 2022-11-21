@@ -16,7 +16,7 @@
         android:padding="5dp"
         android:layout_gravity="center"
         android:scaleType="fitCenter"
-        android:src="@drawable/user_image"
+        android:src="@drawable/userp"
         android:theme="@style/userImageShape"
         app:strokeWidth="2dp">
 

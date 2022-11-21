@@ -23,7 +23,6 @@ import com.pan.foodbox.util.SpacingItemDecoration
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -50,12 +49,9 @@ class MainActivity : BaseActivity(),
         actionBar?.setDisplayHomeAsUpEnabled(true)
         firebaseAuth = FirebaseAuth.getInstance()
 
-        sharePreference = getSharedPreferences("success", MODE_PRIVATE)
-        val editor=sharePreference.edit()
-        editor.putBoolean("isRegister",true)
-        editor.apply()
 
-        val currentUser: FirebaseUser? = firebaseAuth.currentUser
+
+        val currentUser = firebaseAuth.currentUser
 
         val navigationView = findViewById<NavigationView>(R.id.nvView)
         val navHeader = navigationView.getHeaderView(0)
@@ -81,6 +77,9 @@ class MainActivity : BaseActivity(),
                             .into(nvProfile)
                     }
                 }
+        }
+        else{
+            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
         }
 
         toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
@@ -114,7 +113,6 @@ class MainActivity : BaseActivity(),
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 }
                 R.id.logout -> {
-                  //  sharePreference.edit().remove("isRegister").commit()
                     forSingOut()
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 }
@@ -143,6 +141,8 @@ class MainActivity : BaseActivity(),
             .setPositiveButton("Ok") { _, _ ->
                 FirebaseAuth.getInstance().signOut()
                 finish()
+                sharePreference.edit().remove("isRegister").apply()
+
             }
             .setNegativeButton("Cancel", null)
             .setCancelable(false)
@@ -206,8 +206,12 @@ class MainActivity : BaseActivity(),
 
     }
 
-    override fun onStart() {
+   override fun onStart() {
         super.onStart()
+       sharePreference = getSharedPreferences("success", MODE_PRIVATE)
+       val editor = sharePreference.edit()
+       editor.putBoolean("isRegister", true)
+       editor.apply()
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         if (firebaseUser == null) {
             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
